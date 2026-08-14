@@ -16,13 +16,17 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
-        // Auto-seed demo user if the admin@mubee.com user doesn't exist
-        if (!User::where('email', 'admin@mubee.com')->exists()) {
-            User::create([
-                'name' => 'Admin Mubee',
-                'email' => 'admin@mubee.com',
-                'password' => bcrypt('password'),
-            ]);
+        try {
+            // Auto-seed demo user if the admin@mubee.com user doesn't exist
+            if (\Illuminate\Support\Facades\Schema::hasTable('users') && !User::where('email', 'admin@mubee.com')->exists()) {
+                User::create([
+                    'name' => 'Admin Mubee',
+                    'email' => 'admin@mubee.com',
+                    'password' => bcrypt('password'),
+                ]);
+            }
+        } catch (\Throwable $e) {
+            // Log or ignore if table does not exist yet
         }
 
         return view('auth.login');

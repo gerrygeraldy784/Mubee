@@ -64,12 +64,22 @@ $app->instance(\Illuminate\Foundation\PackageManifest::class, new \Illuminate\Fo
 $app->register(Illuminate\Filesystem\FilesystemServiceProvider::class);
 $app->register(Illuminate\View\ViewServiceProvider::class);
 
-// Paksa seluruh konfigurasi path penyimpanan internal Laravel mengarah ke /tmp
-$app->booting(function () use ($app) {
+// Paksa seluruh konfigurasi path penyimpanan internal Laravel mengarah ke /tmp & Auto-Migrate Database
+$app->booted(function () use ($app) {
     $app['config']->set('view.compiled', '/tmp/storage/framework/views');
     $app['config']->set('session.files', '/tmp/storage/framework/sessions');
     $app['config']->set('cache.stores.file.path', '/tmp/storage/framework/cache/data');
     $app['config']->set('logging.channels.single.path', '/tmp/storage/logs/laravel.log');
+
+    // Otomatis jalankan migrasi & seeder jika database (Supabase/SQLite) belum memiliki tabel "users"
+    try {
+        if (!\Illuminate\Support\Facades\Schema::hasTable('users')) {
+            \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+            \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
+        }
+    } catch (\Throwable $e) {
+        // Abaikan jika database bermasalah saat dikueri awal
+    }
 });
 
 // 4. Handle HTTP Request menggunakan mekanisme standar Laravel 11
