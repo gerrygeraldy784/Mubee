@@ -21,8 +21,13 @@
     "env": {
         "APP_ENV": "production",
         "APP_DEBUG": "true",
+        "APP_KEY": "base64:JUqlSUFSd3oHgF5Jxiv6Y/5dyr7l5D2aBEYVOXWoyoQ=",
         "SESSION_DRIVER": "cookie",
         "CACHE_STORE": "array",
-        "LOG_CHANNEL": "stderr"
+        "LOG_CHANNEL": "stderr",
+        "DB_CONNECTION": "sqlite",
+        "DB_DATABASE": "/tmp/database.sqlite",
+        "TMDB_API_KEY": "5bef6ba60cb2f0254fa243532fd6b418",
+        "TMDB_API_TOKEN": "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1YmVmNmJhNjBjYjJmMDI1NGZhMjQzNTMyZmQ2YjQxOCIsIm5iZiI6MTc4NDMwMDU5MC4yMDEsInN1YiI6IjZhNWE0NDJlYmFlZDhlZTQyNjMxZmQyYyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.ZBoFGTJviBB-da_kPL5J3VzjldwQ5vIeRH4-bkFdOpY"
     }
 }

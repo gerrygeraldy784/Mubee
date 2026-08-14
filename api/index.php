@@ -21,11 +21,18 @@ foreach ($storageDirs as $dir) {
     }
 }
 
-// 2. Arahkan direktori storage & cache ke /tmp
+// 2. Inisialisasi file database SQLite sementara jika belum ada
+if (!file_exists('/tmp/database.sqlite')) {
+    touch('/tmp/database.sqlite');
+}
+
+// 3. Arahkan direktori storage & database ke /tmp
 putenv('APP_STORAGE=/tmp/storage');
 putenv('VIEW_COMPILED_PATH=/tmp/storage/framework/views');
+putenv('DB_CONNECTION=sqlite');
+putenv('DB_DATABASE=/tmp/database.sqlite');
 
-// 3. Autoload Composer & Bootstrap Application
+// 4. Autoload Composer & Bootstrap Application
 require __DIR__ . '/../vendor/autoload.php';
 
 $app = require_once __DIR__ . '/../bootstrap/app.php';
@@ -35,7 +42,7 @@ if (method_exists($app, 'useStoragePath')) {
     $app->useStoragePath('/tmp/storage');
 }
 
-// 4. Handle request HTTP
+// 5. Handle request HTTP
 $kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
 
 $response = $kernel->handle(
