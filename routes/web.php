@@ -8,6 +8,31 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\MovieController;
 use App\Http\Controllers\TvController;
 
+// Utility Setup Route untuk Vercel / Supabase Database Migration
+Route::get('/setup-db', function () {
+    try {
+        $app = app();
+        /** @var \Illuminate\Database\Migrations\Migrator $migrator */
+        $migrator = $app->make('migrator');
+        if (!$migrator->repositoryExists()) {
+            $migrator->getRepository()->createRepository();
+        }
+        $migrator->run([database_path('migrations')], ['force' => true]);
+
+        if (!\App\Models\User::where('email', 'admin@mubee.com')->exists()) {
+            \App\Models\User::create([
+                'name' => 'Admin Mubee',
+                'email' => 'admin@mubee.com',
+                'password' => bcrypt('password'),
+            ]);
+        }
+
+        return "<div style='font-family:sans-serif;background:#0f172a;color:#4ade80;padding:2rem;border-radius:1rem;'><h1>✅ Migrasi Database Supabase Sukses!</h1><p>Seluruh tabel (users, my_lists, watch_history, dll) dan user <strong>admin@mubee.com</strong> telah berhasil dibuat di Supabase PostgreSQL.</p><a href='/login' style='background:#3b82f6;color:white;padding:0.75rem 1.5rem;text-decoration:none;border-radius:0.5rem;display:inline-block;'>Ke Halaman Login</a></div>";
+    } catch (\Throwable $e) {
+        return "<div style='font-family:sans-serif;background:#0f172a;color:#ef4444;padding:2rem;'><h1>❌ Gagal Migrasi:</h1><p>" . htmlspecialchars($e->getMessage()) . "</p><pre>" . htmlspecialchars($e->getTraceAsString()) . "</pre></div>";
+    }
+});
+
 // Auth Routes (Guest Only)
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -73,6 +98,3 @@ Route::middleware('auth')->group(function () {
         return response()->file(public_path('tampilan.html'));
     })->name('tampilan');
 });
-
-
-

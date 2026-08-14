@@ -71,11 +71,23 @@ $app->booted(function () use ($app) {
     $app['config']->set('cache.stores.file.path', '/tmp/storage/framework/cache/data');
     $app['config']->set('logging.channels.single.path', '/tmp/storage/logs/laravel.log');
 
-    // Otomatis jalankan migrasi & seeder jika database (Supabase/SQLite) belum memiliki tabel "users"
+    // Otomatis jalankan migrasi & seeder via native Migrator jika database belum memiliki tabel "users"
     try {
         if (!\Illuminate\Support\Facades\Schema::hasTable('users')) {
-            \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
-            \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
+            /** @var \Illuminate\Database\Migrations\Migrator $migrator */
+            $migrator = $app->make('migrator');
+            if (!$migrator->repositoryExists()) {
+                $migrator->getRepository()->createRepository();
+            }
+            $migrator->run([database_path('migrations')], ['force' => true]);
+
+            if (!\App\Models\User::where('email', 'admin@mubee.com')->exists()) {
+                \App\Models\User::create([
+                    'name' => 'Admin Mubee',
+                    'email' => 'admin@mubee.com',
+                    'password' => bcrypt('password'),
+                ]);
+            }
         }
     } catch (\Throwable $e) {
         // Abaikan jika database bermasalah saat dikueri awal
