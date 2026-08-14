@@ -66,6 +66,8 @@ $app->register(Illuminate\View\ViewServiceProvider::class);
 
 // Paksa seluruh konfigurasi path penyimpanan internal Laravel mengarah ke /tmp & Auto-Migrate Database
 $app->booted(function () use ($app) {
+    \Illuminate\Support\Facades\URL::forceScheme('https');
+
     $app['config']->set('view.compiled', '/tmp/storage/framework/views');
     $app['config']->set('session.files', '/tmp/storage/framework/sessions');
     $app['config']->set('cache.stores.file.path', '/tmp/storage/framework/cache/data');
