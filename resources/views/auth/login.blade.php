@@ -291,14 +291,7 @@
     <!-- Main Container -->
     <main>
         <div class="login-card">
-            <h2 class="login-title">Masuk ke Sesi</h2>
-            
-            <!-- Demo Information Alert -->
-            <div class="demo-badge">
-                <h5><i class="fa-solid fa-circle-info"></i> Akun Demo Siap Pakai</h5>
-                <p>Email: admin@mubee.com</p>
-                <p>Password: password</p>
-            </div>
+            <h2 class="login-title">Masuk ke Akun</h2>
 
             @if (session('success'))
                 <div class="alert-status">
@@ -349,7 +342,7 @@
 
                 <!-- Submit Button -->
                 <button type="submit" class="btn-submit">
-                    Masuk Sekarang <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                    Masuk ke Akun <i class="fa-solid fa-arrow-right-to-bracket"></i>
                 </button>
             </form>
 
