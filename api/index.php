@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 
 define('LARAVEL_START', microtime(true));
 
-// 1. Siapkan semua folder storage di /tmp (Vercel Read-Only Filesystem Fix)
+// 1. Siapkan semua folder storage & bootstrap cache di /tmp (Vercel Read-Only Filesystem Fix)
 $dirs = [
     '/tmp/storage/framework/views',
     '/tmp/storage/framework/cache/data',
@@ -48,6 +48,9 @@ $app = require_once __DIR__ . '/../bootstrap/app.php';
 
 if (method_exists($app, 'useStoragePath')) {
     $app->useStoragePath('/tmp/storage');
+}
+if (method_exists($app, 'useBootstrapPath')) {
+    $app->useBootstrapPath('/tmp/bootstrap');
 }
 
 // Registrasi Service Provider inti (files & view) secara eksplisit untuk Serverless Vercel
