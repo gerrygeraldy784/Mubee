@@ -21,6 +21,10 @@ foreach ($dirs as $dir) {
 
 putenv('APP_STORAGE=/tmp/storage');
 putenv('VIEW_COMPILED_PATH=/tmp/storage/framework/views');
+$_ENV['APP_STORAGE'] = '/tmp/storage';
+$_ENV['VIEW_COMPILED_PATH'] = '/tmp/storage/framework/views';
+$_SERVER['APP_STORAGE'] = '/tmp/storage';
+$_SERVER['VIEW_COMPILED_PATH'] = '/tmp/storage/framework/views';
 
 // 2. Fallback ke SQLite jika driver PostgreSQL (pdo_pgsql) tidak tersedia di Vercel Serverless
 if (!extension_loaded('pdo_pgsql') && (getenv('DB_CONNECTION') === 'pgsql' || ($_ENV['DB_CONNECTION'] ?? '') === 'pgsql')) {
@@ -46,5 +50,13 @@ if (method_exists($app, 'useStoragePath')) {
     $app->useStoragePath('/tmp/storage');
 }
 
-// 4. Murni Jalankan HTTP Request Handler Laravel 11
+// Paksa seluruh konfigurasi path penyimpanan internal Laravel mengarah ke /tmp
+$app->booting(function () use ($app) {
+    $app['config']->set('view.compiled', '/tmp/storage/framework/views');
+    $app['config']->set('session.files', '/tmp/storage/framework/sessions');
+    $app['config']->set('cache.stores.file.path', '/tmp/storage/framework/cache/data');
+    $app['config']->set('logging.channels.single.path', '/tmp/storage/logs/laravel.log');
+});
+
+// 4. Handle HTTP Request menggunakan mekanisme standar Laravel 11
 $app->handleRequest(Request::capture());
