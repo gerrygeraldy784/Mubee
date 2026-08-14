@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 
 define('LARAVEL_START', microtime(true));
 
-// 1. Siapkan semua folder storage yang dibutuhkan di /tmp (Vercel Read-Only Filesystem Fix)
+// 1. Siapkan semua folder storage di /tmp (Vercel Read-Only Filesystem Fix)
 $dirs = [
     '/tmp/storage/framework/views',
     '/tmp/storage/framework/cache/data',
@@ -22,12 +22,10 @@ foreach ($dirs as $dir) {
 putenv('APP_STORAGE=/tmp/storage');
 putenv('VIEW_COMPILED_PATH=/tmp/storage/framework/views');
 
-// 2. Cek Driver Database (Fallback ke SQLite jika pdo_pgsql tidak tersedia di Vercel)
-$isNewDb = false;
+// 2. Fallback ke SQLite jika driver PostgreSQL (pdo_pgsql) tidak tersedia di Vercel Serverless
 if (!extension_loaded('pdo_pgsql') && (getenv('DB_CONNECTION') === 'pgsql' || ($_ENV['DB_CONNECTION'] ?? '') === 'pgsql')) {
     $sqlitePath = '/tmp/database.sqlite';
-    $isNewDb = !file_exists($sqlitePath) || filesize($sqlitePath) === 0;
-    if ($isNewDb) {
+    if (!file_exists($sqlitePath)) {
         @touch($sqlitePath);
     }
     putenv('DB_CONNECTION=sqlite');
@@ -48,17 +46,5 @@ if (method_exists($app, 'useStoragePath')) {
     $app->useStoragePath('/tmp/storage');
 }
 
-// Jika SQLite baru dibuat di /tmp, jalankan migrasi secara otomatis
-if ($isNewDb) {
-    try {
-        /** @var \Illuminate\Contracts\Console\Kernel $consoleKernel */
-        $consoleKernel = $app->make(\Illuminate\Contracts\Console\Kernel::class);
-        $consoleKernel->call('migrate', ['--force' => true]);
-        $consoleKernel->call('db:seed', ['--force' => true]);
-    } catch (\Throwable $e) {
-        // Abaikan error migrasi jika tabel sudah ada
-    }
-}
-
-// 4. Handle HTTP Request menggunakan mekanisme standar Laravel 11
+// 4. Murni Jalankan HTTP Request Handler Laravel 11
 $app->handleRequest(Request::capture());
