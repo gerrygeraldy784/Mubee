@@ -33,7 +33,12 @@ if (method_exists($app, 'useStoragePath')) {
     $app->useStoragePath('/tmp/storage');
 }
 
-// 4. Inisialisasi HTTP Kernel & Boot Provider (Wajib agar service [view] terdaftar)
+// Pastikan ViewServiceProvider terdaftar agar service 'view' selalu tersedia di Vercel
+if (!$app->bound('view')) {
+    $app->register(\Illuminate\View\ViewServiceProvider::class);
+}
+
+// 4. Inisialisasi HTTP Kernel & Handle Request
 $kernel = $app->make(Kernel::class);
 
 $response = $kernel->handle(
