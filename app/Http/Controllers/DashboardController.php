@@ -254,7 +254,8 @@ class DashboardController extends Controller
 
         // Fetch Recent Watch History records for the logged-in user
         $watchHistoryRecords = \App\Models\WatchHistory::where('user_id', $userId)
-            ->orderByRaw('COALESCE(last_watched_at, watched_at, id) DESC')
+            ->orderByRaw('COALESCE(last_watched_at, watched_at, updated_at, created_at) DESC')
+            ->orderBy('id', 'desc')
             ->limit(10)
             ->get();
 
