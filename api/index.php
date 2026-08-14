@@ -1,6 +1,11 @@
 <?php
 
-// 1. Buat struktur folder sementara di /tmp
+use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Http\Request;
+
+define('LARAVEL_START', microtime(true));
+
+// 1. Buat folder temporary di /tmp
 $dirs = [
     '/tmp/storage/framework/views',
     '/tmp/storage/framework/cache/data',
@@ -15,10 +20,18 @@ foreach ($dirs as $dir) {
     }
 }
 
-// 2. Arahkan cache bootstrap ke folder /tmp
-putenv('APP_CONFIG_CACHE=/tmp/bootstrap/cache/config.php');
-putenv('APP_ROUTES_CACHE=/tmp/bootstrap/cache/routes.php');
-putenv('APP_EVENTS_CACHE=/tmp/bootstrap/cache/events.php');
+// 2. Load autoload & bootstrap app
+require __DIR__ . '/../vendor/autoload.php';
+$app = require_once __DIR__ . '/../bootstrap/app.php';
 
-// 3. Jalankan Laravel
-require __DIR__ . '/../public/index.php';
+// 3. Paksa Laravel menggunakan storage di /tmp (PENTING)
+$app->useStoragePath('/tmp/storage');
+
+// 4. Handle request
+$kernel = $app->make(Kernel::class);
+
+$response = $kernel->handle(
+    $request = Request::capture()
+)->send();
+
+$kernel->terminate($request, $response);
