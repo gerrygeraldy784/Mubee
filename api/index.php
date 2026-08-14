@@ -53,6 +53,13 @@ if (method_exists($app, 'useBootstrapPath')) {
     $app->useBootstrapPath('/tmp/bootstrap');
 }
 
+// Overwrite instansiasi PackageManifest agar manifestPath menggunakan /tmp/bootstrap/cache/packages.php
+$app->instance(\Illuminate\Foundation\PackageManifest::class, new \Illuminate\Foundation\PackageManifest(
+    new \Illuminate\Filesystem\Filesystem,
+    $app->basePath(),
+    '/tmp/bootstrap/cache/packages.php'
+));
+
 // Registrasi Service Provider inti (files & view) secara eksplisit untuk Serverless Vercel
 $app->register(Illuminate\Filesystem\FilesystemServiceProvider::class);
 $app->register(Illuminate\View\ViewServiceProvider::class);
