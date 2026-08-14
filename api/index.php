@@ -50,6 +50,10 @@ if (method_exists($app, 'useStoragePath')) {
     $app->useStoragePath('/tmp/storage');
 }
 
+// Registrasi Service Provider inti (files & view) secara eksplisit untuk Serverless Vercel
+$app->register(Illuminate\Filesystem\FilesystemServiceProvider::class);
+$app->register(Illuminate\View\ViewServiceProvider::class);
+
 // Paksa seluruh konfigurasi path penyimpanan internal Laravel mengarah ke /tmp
 $app->booting(function () use ($app) {
     $app['config']->set('view.compiled', '/tmp/storage/framework/views');
