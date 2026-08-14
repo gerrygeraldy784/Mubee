@@ -25,8 +25,12 @@
         "SESSION_DRIVER": "cookie",
         "CACHE_STORE": "array",
         "LOG_CHANNEL": "stderr",
-        "DB_CONNECTION": "sqlite",
-        "DB_DATABASE": "/tmp/database.sqlite",
+        "DB_CONNECTION": "pgsql",
+        "DB_HOST": "aws-0-ap-northeast-1.pooler.supabase.com",
+        "DB_PORT": "6543",
+        "DB_DATABASE": "postgres",
+        "DB_USERNAME": "postgres.onqryikvmwxaiwvddlxh",
+        "DB_PASSWORD": "qGfFONokkqaPsoOi",
         "TMDB_API_KEY": "5bef6ba60cb2f0254fa243532fd6b418",
         "TMDB_API_TOKEN": "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1YmVmNmJhNjBjYjJmMDI1NGZhMjQzNTMyZmQ2YjQxOCIsIm5iZiI6MTc4NDMwMDU5MC4yMDEsInN1YiI6IjZhNWE0NDJlYmFlZDhlZTQyNjMxZmQyYyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.ZBoFGTJviBB-da_kPL5J3VzjldwQ5vIeRH4-bkFdOpY"
     }
