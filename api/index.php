@@ -1,11 +1,12 @@
 <?php
 
-// Tampilkan error jika terjadi kegagalan sistem
 ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
 
-// 1. Siapkan semua folder storage yang diperlukan di /tmp
+define('LARAVEL_START', microtime(true));
+
+// 1. Buat folder temporary & database SQLite di /tmp (karena Vercel serverless bersifat Read-Only)
 $dirs = [
     '/tmp/storage/framework/views',
     '/tmp/storage/framework/cache/data',
@@ -20,9 +21,22 @@ foreach ($dirs as $dir) {
     }
 }
 
-// 2. Set environment agar file konfigurasi diarahkan ke /tmp
+if (!file_exists('/tmp/database.sqlite')) {
+    touch('/tmp/database.sqlite');
+}
+
+// 2. Set environment variables untuk storage & SQLite di /tmp
 putenv('APP_STORAGE=/tmp/storage');
 putenv('VIEW_COMPILED_PATH=/tmp/storage/framework/views');
+putenv('DB_CONNECTION=sqlite');
+putenv('DB_DATABASE=/tmp/database.sqlite');
 
-// 3. Jalankan entry point resmi Laravel
-require __DIR__ . '/../public/index.php';
+// 3. Autoload Composer & Bootstrap Application
+require __DIR__ . '/../vendor/autoload.php';
+$app = require_once __DIR__ . '/../bootstrap/app.php';
+
+// 4. Paksa Laravel menggunakan storage di /tmp (Read-Only fix)
+$app->useStoragePath('/tmp/storage');
+
+// 5. Tangani Request HTTP
+$app->handleRequest(\Illuminate\Http\Request::capture());
