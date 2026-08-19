@@ -33,9 +33,8 @@
         
         <!-- Video Player Section -->
         <section class="bg-black rounded-2xl overflow-hidden border border-gray-850 shadow-2xl">
-            <!-- Multi-Server & Subtitle/Dub Selector -->
-            <div class="bg-gray-950 border-b border-gray-800 p-4 space-y-4">
-                <!-- Server Selector -->
+            <!-- Server Selector -->
+            <div class="bg-gray-950 border-b border-gray-800 p-4">
                 <div>
                     <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-2 flex items-center gap-2">
                         <i class="fa-solid fa-server text-red-500"></i> Pilih Server Video
@@ -65,48 +64,6 @@
                         <button onclick="switchServer(8)" id="server-8" class="server-btn text-xs font-bold px-3.5 py-2 rounded-lg border border-gray-700 bg-gray-800 text-gray-300 hover:border-red-500 hover:text-white">
                             <i class="fa-solid fa-play-circle text-red-500"></i> Server 8 (VidSrc.icu VIP)
                         </button>
-                    </div>
-                </div>
-
-                <!-- Subtitle & Dubbing Control Bar -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 border-t border-gray-850">
-                    <!-- Subtitle Language -->
-                    <div>
-                        <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-2 flex items-center gap-2">
-                            <i class="fa-solid fa-closed-captioning text-yellow-400"></i> Pilihan Subtitle (Teks)
-                        </p>
-                        <div class="flex flex-wrap gap-2">
-                            <button onclick="changeSubtitle('id')" id="sub-id" class="sub-btn active-sub text-xs font-semibold px-3 py-1.5 rounded-md border border-yellow-500/40 bg-yellow-500/10 text-yellow-300 hover:bg-yellow-500/20">
-                                🇮🇩 Bahasa Indonesia (Sub Indo)
-                            </button>
-                            <button onclick="changeSubtitle('en')" id="sub-en" class="sub-btn text-xs font-semibold px-3 py-1.5 rounded-md border border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700">
-                                🇬🇧 English (Sub Eng)
-                            </button>
-                            <button onclick="changeSubtitle('ko')" id="sub-ko" class="sub-btn text-xs font-semibold px-3 py-1.5 rounded-md border border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700">
-                                🇰🇷 Korea (Original)
-                            </button>
-                            <button onclick="changeSubtitle('off')" id="sub-off" class="sub-btn text-xs font-semibold px-3 py-1.5 rounded-md border border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700">
-                                Matikan Subtitle
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Audio / Dubbing -->
-                    <div>
-                        <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-2 flex items-center gap-2">
-                            <i class="fa-solid fa-language text-cyan-400"></i> Pilihan Audio / Dubbing (Suara)
-                        </p>
-                        <div class="flex flex-wrap gap-2">
-                            <button onclick="changeDubbing('ko')" id="dub-ko" class="dub-btn active-dub text-xs font-semibold px-3 py-1.5 rounded-md border border-cyan-500/40 bg-cyan-500/10 text-cyan-300 hover:bg-cyan-500/20">
-                                🇰🇷 Audio Asli Korea (Original)
-                            </button>
-                            <button onclick="changeDubbing('id')" id="dub-id" class="dub-btn text-xs font-semibold px-3 py-1.5 rounded-md border border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700">
-                                🇮🇩 Dubbing Indonesia (Dub Indo)
-                            </button>
-                            <button onclick="changeDubbing('en')" id="dub-en" class="dub-btn text-xs font-semibold px-3 py-1.5 rounded-md border border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700">
-                                🇬🇧 Dubbing English
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -222,45 +179,7 @@
             }
         }
 
-        function changeSubtitle(langCode) {
-            document.querySelectorAll('.sub-btn').forEach(btn => {
-                btn.classList.remove('active-sub', 'border-yellow-500/40', 'bg-yellow-500/10', 'text-yellow-300');
-                btn.classList.add('border-gray-700', 'bg-gray-800', 'text-gray-300');
-            });
-            const selectedBtn = document.getElementById('sub-' + langCode);
-            if (selectedBtn) {
-                selectedBtn.classList.remove('border-gray-700', 'bg-gray-800', 'text-gray-300');
-                selectedBtn.classList.add('active-sub', 'border-yellow-500/40', 'bg-yellow-500/10', 'text-yellow-300');
-            }
 
-            const iframe = document.getElementById('videoPlayer');
-            let baseUrl = (movieServers[currentServer] || movieServers[1]).split('?')[0];
-
-            if (langCode !== 'off') {
-                iframe.src = `${baseUrl}?ds_lang=${langCode}&sub_info=true&sub=${langCode}`;
-            } else {
-                iframe.src = baseUrl;
-            }
-        }
-
-        function changeDubbing(dubLang) {
-            document.querySelectorAll('.dub-btn').forEach(btn => {
-                btn.classList.remove('active-dub', 'border-cyan-500/40', 'bg-cyan-500/10', 'text-cyan-300');
-                btn.classList.add('border-gray-700', 'bg-gray-800', 'text-gray-300');
-            });
-            const selectedBtn = document.getElementById('dub-' + dubLang);
-            if (selectedBtn) {
-                selectedBtn.classList.remove('border-gray-700', 'bg-gray-800', 'text-gray-300');
-                selectedBtn.classList.add('active-dub', 'border-cyan-500/40', 'bg-cyan-500/10', 'text-cyan-300');
-            }
-
-            if (dubLang === 'id' || dubLang === 'en') {
-                switchServer(2);
-                alert(`Pengisian suara / Dubbing [${dubLang.toUpperCase()}] diaktifkan. Anda juga dapat memilih trek suara Dubbing langsung di tombol ⚙️ (Pengaturan Player).`);
-            } else {
-                switchServer(1);
-            }
-        }
 
         function toggleBookmark(tmdbId, type, title, posterPath) {
             fetch('/bookmarks/toggle', {
